@@ -11,6 +11,9 @@ module TravelSchedule
       titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
       titles_array = titles.map { |title| title.text }
 
+      infos = doc.xpath("//div[@class = 'info']/div[1]")
+      infos_array = infos.map { |info| info.text.split(': ')[1] }
+
     end
   end
 end
