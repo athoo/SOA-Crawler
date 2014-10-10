@@ -12,9 +12,8 @@ module TravelSchedule
       titles_array = titles.map { |title| title.text }
 
       infos = doc.xpath("//div[@class = 'info']/div[1]")
-      infos_array = infos.map { |inf| inf.text.split(': ')[1] }
+      infos_array = infos.map { |info| info.text.split(': ')[1] }
+
     end
   end
 end
-
-p TravelSchedule::NiceSchedule.get_schedule
