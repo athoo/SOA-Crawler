@@ -5,22 +5,37 @@ module TravelSchedule
   class NiceSchedule
     NICEDAY_URL = 'http://plan.niceday.tw/'
 
-    def self.get_schedule
-      doc = Nokogiri::HTML(open(NICEDAY_URL))
+    def self.schedules
+      document = open_html
+      titles = get_titles(document)
+      days = get_days(document)
+      places = get_places(document)
+      mix(titles, days, places)
+    end
 
+    def self.open_html
+      Nokogiri::HTML(open(NICEDAY_URL))
+    end
+
+    def self.get_titles(doc)
       titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
-      titles_array = titles.map { |title| title.text }
+      titles.map { |title| title.text }
+    end
 
+    def self.get_days(doc)
       days = doc.xpath("//div[@class = 'info']/div[1]")
-      days_array = days.map { |day| day.text.split(': ')[1] }
+      days.map { |day| day.text.split(': ')[1] }
+    end
 
-      schedules = doc.xpath("//div[@class = 'info']/div[2]")
-      schedule_array = schedules.map { |schedule| schedule.text.gsub(/\s/, '') }
+    def self.get_places(doc)
+      places = doc.xpath("//div[@class = 'info']/div[2]")
+      places.map { |place| place.text.gsub(/\s/, '') }
+    end
 
-      informations = titles_array.each_with_index.map do |_, index|
-        [titles_array[index], [days_array[index], schedule_array[index]]]
+    def self.mix(t, d, p)
+      informations = t.each_with_index.map do |_, index|
+        [t[index], [d[index], p[index]]]
       end
-
       Hash[informations]
     end
   end

@@ -2,4 +2,4 @@
 
 require './crawler'
 
-print TravelSchedule::NiceSchedule.get_schedule
+print TravelSchedule::NiceSchedule.schedules
