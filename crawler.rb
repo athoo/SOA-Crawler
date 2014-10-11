@@ -16,6 +16,14 @@ module TravelSchedule
 
       schedules = doc.xpath("//div[@class = 'info']/div[2]")
       schedule_array = schedules.map { |schedule| schedule.text.gsub(/\s/, '') }
+
+      informations = titles_array.each_with_index.map do |_, index|
+        [titles_array[index], [days_array[index], schedule_array[index]]]
+      end
+
+      Hash[informations]
     end
   end
 end
+
+p TravelSchedule::NiceSchedule.get_schedule
