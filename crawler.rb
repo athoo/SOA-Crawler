@@ -25,5 +25,3 @@ module TravelSchedule
     end
   end
 end
-
-p TravelSchedule::NiceSchedule.get_schedule
