@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
 require './crawler'
+
+print TravelSchedule::NiceSchedule.schedules
