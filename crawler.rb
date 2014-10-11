@@ -2,6 +2,7 @@ require 'nokogiri'
 require 'open-uri'
 
 module TravelSchedule
+  # Construct recommended traveling plan from Niceday
   class NiceSchedule
     NICEDAY_URL = 'http://plan.niceday.tw/'
 
@@ -19,7 +20,7 @@ module TravelSchedule
 
     def self.get_titles(doc)
       titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
-      titles.map { |title| title.text }
+      titles.map(&:text)
     end
 
     def self.get_days(doc)

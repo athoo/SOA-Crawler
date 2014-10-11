@@ -2,4 +2,6 @@
 
 require './crawler'
 
-print TravelSchedule::NiceSchedule.schedules
+plan = TravelSchedule::NiceSchedule.schedules
+
+puts plan
