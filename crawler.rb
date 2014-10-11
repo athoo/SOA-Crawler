@@ -34,10 +34,15 @@ module TravelSchedule
     end
 
     def self.mix(t, d, p)
-      informations = t.each_with_index.map do |_, index|
-        [t[index], [d[index], p[index]]]
+      informations = []
+      t.each_with_index do |_, index|
+        loc_info = {}
+        loc_info['title'] = t[index]
+        loc_info['day(s)'] = d[index].to_i
+        loc_info['route'] = p[index]
+        informations << loc_info
       end
-      Hash[informations]
+      informations
     end
   end
 end
