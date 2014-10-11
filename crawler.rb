@@ -11,9 +11,17 @@ module TravelSchedule
       titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
       titles_array = titles.map { |title| title.text }
 
-      infos = doc.xpath("//div[@class = 'info']/div[1]")
-      infos_array = infos.map { |info| info.text.split(': ')[1] }
+      days = doc.xpath("//div[@class = 'info']/div[1]")
+      days_array = days.map { |day| day.text.split(': ')[1] }
 
+      schedules = doc.xpath("//div[@class = 'info']/div[2]")
+      schedule_array = schedules.map { |schedule| schedule.text.gsub(/\s/, '') }
+
+      informations = titles_array.each_with_index.map do |_, index|
+        [titles_array[index], [days_array[index], schedule_array[index]]]
+      end
+
+      Hash[informations]
     end
   end
 end
