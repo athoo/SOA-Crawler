@@ -1,7 +1,9 @@
 require 'nokogiri'
 require 'open-uri'
+require 'yaml'
 
 module TravelSchedule
+  # Construct recommended traveling plan from Niceday
   class NiceSchedule
     NICEDAY_URL = 'http://plan.niceday.tw/'
 
@@ -19,7 +21,7 @@ module TravelSchedule
 
     def self.get_titles(doc)
       titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
-      titles.map { |title| title.text }
+      titles.map(&:text)
     end
 
     def self.get_days(doc)
@@ -32,11 +34,15 @@ module TravelSchedule
       places.map { |place| place.text.gsub(/\s/, '') }
     end
 
+    def self.to_yaml
+      schedules.to_yaml
+    end
+
     def self.mix(t, d, p)
       informations = t.each_with_index.map do |_, index|
-        [t[index], [d[index], p[index]]]
+        { 'title' => t[index], 'day' => d[index], 'route' => p[index] }
       end
-      Hash[informations]
+      informations
     end
   end
 end

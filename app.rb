@@ -2,4 +2,4 @@
 
 require './crawler'
 
-print TravelSchedule::NiceSchedule.schedules
+puts TravelSchedule::NiceSchedule.to_yaml
