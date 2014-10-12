@@ -42,7 +42,7 @@ module TravelSchedule
       informations = t.each_with_index.map do |_, index|
         { 'title' => t[index], 'day' => d[index], 'route' => p[index] }
       end
-      Hash[informations]
+      informations
     end
   end
 end
