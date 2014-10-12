@@ -9,15 +9,16 @@ Once you have no idea on where to go on weekend, the application will give you s
 
 ## Usage
 
-Install it with the following command:
-````ruby
-gem install travelschedule
+Copy the following on command line.
+
+(Choose the directory you want to put it)
+````
+$ git clone git@github.com:ChenLiZhan/SOA-Crawler.git
 ````
 
-Then in your file:
-````ruby
-require "travelschedule"
-NiceSchedule.schedule
+Then type,
+````
+$ ruby app.rb
 ````
 
 ## Format
