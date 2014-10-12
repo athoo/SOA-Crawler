@@ -7,10 +7,24 @@ NiceSchedule tries to grabs some information on the [**Niceday**](http://plan.ni
 
 Once you have no idea on where to go on weekend, the application will give you some inspiration.
 
+## Usage
+
+Install it with the following command:
+````ruby
+gem install travelschedule
+````
+
+Then in your file:
+````ruby
+require "travelschedule"
+NiceSchedule.schedule
+````
+
 ## Format
+
 *Ex :*
 
-**title:  ** 花蓮行(下雨版)
+**title:** 花蓮行(下雨版)
 
 **days:** 3
 
