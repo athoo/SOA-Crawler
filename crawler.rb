@@ -40,7 +40,7 @@ module TravelSchedule
 
     def self.mix(t, d, p)
       informations = t.each_with_index.map do |_, index|
-        { 'title' => t[index], 'day' => d[index], 'route' => p[index] }
+        { 'title' => t[index], 'day' => d[index].to_i, 'route' => p[index] }
       end
       informations
     end
