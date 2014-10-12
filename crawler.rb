@@ -23,6 +23,7 @@ module TravelSchedule
     def self.spot
       # transform the asc-ii url to binary one which is possible for nokogiri to manipulate
       NICESPOT_URL.force_encoding('binary')
+      # Escapes HTTP reserved and unwise characters in str
       doc = WEBrick::HTTPUtils.escape(NICESPOT_URL)
       open_url = Nokogiri::HTML(open(doc))
       open_url
