@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
+require 'yaml'
 
 module TravelSchedule
   # Construct recommended traveling plan from Niceday
@@ -33,16 +34,15 @@ module TravelSchedule
       places.map { |place| place.text.gsub(/\s/, '') }
     end
 
+    def self.to_yaml
+      schedules.to_yaml
+    end
+
     def self.mix(t, d, p)
-      informations = []
-      t.each_with_index do |_, index|
-        loc_info = {}
-        loc_info['title'] = t[index]
-        loc_info['day(s)'] = d[index].to_i
-        loc_info['route'] = p[index]
-        informations << loc_info
+      informations = t.each_with_index.map do |_, index|
+        { 'title' => t[index], 'day' => d[index], 'route' => p[index] }
       end
-      informations
+      Hash[informations]
     end
   end
 end
