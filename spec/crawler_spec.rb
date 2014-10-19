@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'minitest/rg'
-require '../lib/crawler'
+require './../lib/crawler'
 
 sample = NiceSchedule.schedules
 

@@ -33,11 +33,17 @@ module TravelSchedule
       links.map { |link| 'http://plan.niceday.tw' + link.text }
     end
 
+    def get_downloads(doc)
+      downloads = doc.xpath("//div[@class = 'bottom']//div[@class = 'download']")
+      downloads.map { |download| download.text.to_i}
+      # downloads.map{ |download| }
+    end
+
     # build the hash for yaml output
-    def mix(t, d, p, l)
+    def mix(t, d, p, l, dt)
       informations = t.each_with_index.map do |_, index|
         { 'title' => t[index], 'day' => d[index].to_i, 'route' => p[index], \
-          'link' => l[index] }
+          'link' => l[index], 'download_times' => dt[index] }
       end
       informations
     end
@@ -47,8 +53,6 @@ module TravelSchedule
       mix.to_yaml
     end
 end  
-
-
 
 # Construct recommended traveling plan from Niceday
 class NiceSchedule
@@ -63,7 +67,8 @@ class NiceSchedule
     days = get_days(document)
     places = get_places(document)
     links = get_links(document)
-    out = mix(titles, days, places, links)
+    download_times = get_downloads(document)
+    out = mix(titles, days, places, links, download_times)
   end
   to_yaml(self.schedules)
 end
@@ -81,6 +86,8 @@ class NiceSpot
     # Escapes HTTP reserved and unwise characters in str
     doc = WEBrick::HTTPUtils.escape(url)
     document = open_html(doc)
+    titles = get_titles(document)
+   
   end
 end
 
