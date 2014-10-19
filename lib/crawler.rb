@@ -21,8 +21,9 @@ module TravelSchedule
 
     # parse the spot and get the url
     def self.spot
-      # document = name
+      # transform the asc-ii url to binary one which is possible for nokogiri to manipulate
       NICESPOT_URL.force_encoding('binary')
+      # Escapes HTTP reserved and unwise characters in str
       doc = WEBrick::HTTPUtils.escape(NICESPOT_URL)
       open_url = Nokogiri::HTML(open(doc))
       open_url
@@ -69,7 +70,7 @@ module TravelSchedule
 
     def self.mix(t, d, p, l)
       informations = t.each_with_index.map do |_, index|
-        { 'title' => t[index], 'day' => d[index], 'route' => p[index], \
+        { 'title' => t[index], 'day' => d[index].to_i, 'route' => p[index], \
           'link' => l[index] }
       end
       informations
