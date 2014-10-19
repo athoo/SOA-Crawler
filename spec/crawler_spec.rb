@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'minitest/rg'
 require '../lib/crawler'
 
-sample = TravelSchedule::NiceSchedule.schedules
+sample = NiceSchedule.schedules
 
 describe 'All the schedule' do
 
