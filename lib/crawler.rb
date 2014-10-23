@@ -19,7 +19,7 @@ class MovieInfo
   REFLECTION_SAID = '&said='
 
   def self.movie_review(code = '')
-    code.empty? ? to_yaml(movies) : movie(code)
+    code.empty? ? to_yaml(movies) : to_yaml(movie(code))
   end
 
   def self.movies
