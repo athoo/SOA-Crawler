@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
-require './crawler'
+require '../lib/crawler'
 
-puts TravelSchedule::NiceSchedule.to_yaml if ARGV.empty?
+puts NiceSchedule.schedules.to_yaml if ARGV.empty?
 
-# puts TravelSchedule::NiceSchedule.name
-# puts TravelSchedule::NiceSchedule.spot
+puts ARGV.length()

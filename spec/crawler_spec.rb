@@ -1,8 +1,8 @@
 require 'minitest/autorun'
 require 'minitest/rg'
-require '../lib/crawler'
+require './../lib/crawler'
 
-sample = TravelSchedule::NiceSchedule.schedules
+sample = NiceSchedule.schedules
 
 describe 'All the schedule' do
 
@@ -23,13 +23,29 @@ describe 'All the schedule' do
       each_sche['day'].must_be_kind_of Numeric
     end
 
+    it 'day at least 1' do
+      each_sche['day'].must_be :>, 0
+    end
+
     it 'day no more than 5' do
       each_sche['day'].wont_be :>, 5
+    end
+
+    it 'route must be string' do
+      each_sche['route'].must_be_instance_of String
     end
 
     it 'route must include origin and destination' do
       each_sche['route'].must_include '起點'
       each_sche['route'].must_include '終點'
+    end
+
+    it 'link must accessible' do
+      each_sche['link'].must_include 'http://'
+    end
+
+    it 'download_times must be Numeric' do
+      each_sche['download_times'].must_be_kind_of Numeric
     end
   end
 end
