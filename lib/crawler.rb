@@ -3,27 +3,27 @@ require 'open-uri'
 require 'yaml'
 require 'webrick/httputils'
 
-module TravelSchedule
+module MovieInfo
     # open the destination url
     def open_html(url)
       Nokogiri::HTML(open(url))
     end
 
-    # get the schedule name
+    # get the movie name
     def get_titles(doc)
-      titles = doc.xpath("//div[@class = 'title']//div[@class = 'text']")
-      titles.map(&:text)
+      titles = doc.xpath("//div[@class = 'title']/a")
+      titles.map{|title| title.text.gsub(/[\t\n]/, '')}
     end
 
-    # get the trip length
-    def get_days(doc)
-      days = doc.xpath("//div[@class = 'info']/div[1]")
-      days.map { |day| day.text.split(': ')[1] }
+    # get the storyline of movie
+    def get_storylines(doc)
+      storylines = doc.xpath("//div[@class = 'story']")
+      storylines.map { |story| story.text}
     end
 
-    # get the place visited during the travel
-    def get_places(doc)
-      places = doc.xpath("//div[@class = 'info']/div[2]")
+    # get the release dates
+    def get_dates(doc)
+      places = doc.xpath("//div[@class = 'date']/b")
       places.map { |place| place.text.gsub(/\s/, '') }
     end
 
@@ -52,7 +52,7 @@ module TravelSchedule
     def to_yaml(mix)
       mix.to_yaml
     end
-end  
+end
 
 # Construct recommended traveling plan from Niceday
 class NiceSchedule
@@ -87,7 +87,6 @@ class NiceSpot
     doc = WEBrick::HTTPUtils.escape(url)
     document = open_html(doc)
     titles = get_titles(document)
-   
+
   end
 end
-
