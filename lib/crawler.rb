@@ -1,12 +1,22 @@
 require 'nokogiri'
 require 'open-uri'
 require 'yaml'
+require 'iconv'
 require 'webrick/httputils'
 
 class MovieInfo
 
   ATMOVIES_URL = 'http://www.atmovies.com.tw/movie/movie_new.html'
   MOVIE_BASE_URL = 'http://www.atmovies.com.tw/movie/'
+  WHOLE_MOVIEWS_TITLES = "//div[@class = 'title']/a"
+  WHOLE_MOVIEWS_STORIES = "//div[@class = 'story']"
+  WHOLE_MOVIEWS_DATES = "//div[@class = 'date']/b"
+  WHOLE_MOVIEWS_CODES = "//div[@class = 'title']/a/@href"
+  REFLECTION_BASE = 'http://app.atmovies.com.tw/tool/good.cfm?type=film'
+  REFLECTION_FS = '&fs=2'
+  REFLECTION_CLASS = "//div[@class = 'act01']"
+  REFLECTION_SATITLE = '&satitle='
+  REFLECTION_SAID = '&said='
 
   def self.movie_review(code = '')
     code.empty? ? to_yaml(movies) : movie(code)
@@ -15,14 +25,34 @@ class MovieInfo
   def self.movies
     document = open_html(ATMOVIES_URL)
     titles = get_titles(document)
-    stories = get_story(document)
+    stories = get_stories(document)
     dates = get_dates(document)
     codes = get_codes(document)
-    mix(titles, stories, dates, codes)
+    mix(titles, codes, stories, dates)
   end
 
   def self.movie(code)
-    open_html(MOVIE_BASE_URL + code + '/')
+    document = open_html(MOVIE_BASE_URL + code + '/')
+    info_said = REFLECTION_SAID + code
+    name = get_one_movie_name(document)
+    info_satitle = encode_zh(name)
+    info_uri = REFLECTION_BASE + info_said + info_satitle + REFLECTION_FS
+    informations = open_html(info_uri)
+    reflection = get_reflection(informations)
+    { name: name, like: reflection[0], unlike: reflection[1] }
+  end
+
+  def self.encode_zh(text)
+    REFLECTION_SATITLE + URI.encode(Iconv.new('big5', 'utf-8').iconv(text)).to_s
+  end
+
+  def self.get_one_movie_name(doc)
+    name = doc.xpath("//span[@class = 'at21b']").text
+    name.gsub!(/[\t\r\n]/, '')
+  end
+
+  def self.get_reflection(doc)
+    doc.xpath(REFLECTION_CLASS).text.gsub!(/[\t\r\n]/, '').split
   end
 
   # open the destination url
@@ -32,30 +62,30 @@ class MovieInfo
 
   # get the movie name
   def self.get_titles(doc)
-    titles = doc.xpath("//div[@class = 'title']/a")
+    titles = doc.xpath(WHOLE_MOVIEWS_TITLES)
     titles.map { |title| title.text.gsub(/[\t\n\r]/, '') }
   end
 
   # get the storyline of movie
-  def self.get_story(doc)
-    storylines = doc.xpath("//div[@class = 'story']")
+  def self.get_stories(doc)
+    storylines = doc.xpath(WHOLE_MOVIEWS_STORIES)
     storylines.map { |story| story.text }
   end
 
   # get the release dates
   def self.get_dates(doc)
-    places = doc.xpath("//div[@class = 'date']/b")
+    places = doc.xpath(WHOLE_MOVIEWS_DATES)
     places.map { |place| place.text.gsub(/\s/, '') }
   end
 
   # get the code of movies
   def self.get_codes(doc)
-    codes = doc.xpath("//div[@class = 'title']/a/@href")
+    codes = doc.xpath(WHOLE_MOVIEWS_CODES)
     codes.map { |code| code.value.split('/')[2] }
   end
 
   # build the hash for yaml output
-  def self.mix(t, s, d, c)
+  def self.mix(t, c, s, d)
     informations = t.each_with_index.map do |_, index|
       { 'title' => t[index], 'code' => c[index], 'story' => s[index], \
         'date' => d[index] }
