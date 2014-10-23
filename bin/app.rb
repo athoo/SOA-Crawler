@@ -2,4 +2,4 @@
 
 require '../lib/crawler'
 
-puts MovieInfo::movie_review
+puts MovieInfo.movie_review

@@ -90,4 +90,3 @@ class MovieInfo
     mix.to_yaml
   end
 end
-puts MovieInfo.movie_review
