@@ -2,8 +2,8 @@ require 'nokogiri'
 require 'open-uri'
 require 'yaml'
 
+# get the info from atmovies
 class MovieInfo
-
   ATMOVIES_URL = 'http://www.atmovies.com.tw/movie/movie_new.html'
   MOVIE_BASE_URL = 'http://www.atmovies.com.tw/movie/'
   TRAILER_URL = 'http://app.atmovies.com.tw/movie/movie.cfm?action=trailer&film_id='
@@ -22,7 +22,7 @@ class MovieInfo
     mix(titles, stories, dates, times, trailers)
   end
 
-  #get the details of movie
+  # get the details of movie
   def self.movie_details(code)
     open_html(MOVIE_BASE_URL + code + '/')
   end
@@ -41,13 +41,13 @@ class MovieInfo
   # get the storyline of movie
   def self.get_story(doc)
     storylines = doc.xpath("//div[@class = 'story']")
-    storylines.map { |story| story.text }
+    storylines.map(&:text)
   end
 
   def self.split_day_and_time(doc)
     gap = "\n\t\t\t\t\s\s\s\s\t"
     days_times = doc.xpath("//div[@class = 'date']/b")
-    days_times.map{|d_t| d_t.text.split(gap)}
+    days_times.map { |d_t| d_t.text.split(gap) }
   end
 
   # get the runtime of movie
@@ -58,7 +58,7 @@ class MovieInfo
 
   # get the release date
   def self.get_dates(doc)
-    date_format = '\d+\/\d+\/\d+' #mm/dd/yy
+    date_format = '\d+\/\d+\/\d+' # mm/dd/yy
     days_times = split_day_and_time(doc)
     days_times.map { |d_t| d_t[1].match(/#{date_format}/).to_s }
   end
@@ -72,14 +72,15 @@ class MovieInfo
   # get the trailer link of the movies
   def self.get_trailer(doc)
     codes = get_codes(doc)
-    codes.map { |trailer| TRAILER_URL + trailer}
+    codes.map { |trailer| TRAILER_URL + trailer }
   end
 
   # build the hash for yaml output
-  def self.mix(t, s, d, ti , tr)
+  def self.mix(t, s, d, ti, tr)
     informations = t.each_with_index.map do |_, index|
       { 'title' => t[index], 'story' => s[index], \
-        'date' => d[index], 'runtime(minutes)' => ti[index],'trailer' => tr[index] }
+        'date' => d[index], 'runtime(minutes)' => ti[index].to_i, \
+        'trailer' => tr[index] }
     end
     informations
   end
@@ -88,5 +89,5 @@ class MovieInfo
   def self.to_yaml(mix)
     mix.to_yaml
   end
-
 end
+puts MovieInfo.movie_review
