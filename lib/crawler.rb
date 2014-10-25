@@ -2,7 +2,6 @@ require 'nokogiri'
 require 'open-uri'
 require 'yaml'
 require 'iconv'
-require 'webrick/httputils'
 
 # get the info from atmovies
 class MovieInfo
