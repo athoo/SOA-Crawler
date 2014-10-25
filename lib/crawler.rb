@@ -6,6 +6,7 @@ require 'iconv'
 # get the info from atmovies
 class MovieInfo
   ATMOVIES_URL = 'http://www.atmovies.com.tw/movie/movie_new.html'
+  LATEST = 'http://www.atmovies.com.tw/movie/movie_new.html'
   MOVIE_BASE_URL = 'http://www.atmovies.com.tw/movie/'
   WHOLE_MOVIEWS_TITLES = "//div[@class = 'title']/a"
   WHOLE_MOVIEWS_STORIES = "//div[@class = 'story']"
@@ -18,30 +19,67 @@ class MovieInfo
   REFLECTION_SAID = '&said='
   REFLECTION_NAME = "//span[@class = 'at21b']"
   TRAILER_URL = 'http://app.atmovies.com.tw/movie/movie.cfm?action=trailer&film_id='
+  FIRST_ROUND = 'http://www.atmovies.com.tw/movie/movie_now-1.html'
+  SECOND_ROUND = 'http://www.atmovies.com.tw/movie/movie_now2-1.html'
+  ATMOVIES_MAIN_URL = 'http://www.atmovies.com.tw/home/movie_homepage.html'
 
-  def self.movie_review(code = '')
-    code.empty? ? to_yaml(movies) : movie(code)
+  # add three rank parser
+  def self.us_weekend
+    document = open_html(ATMOVIES_MAIN_URL)
+    get_table(document, '1')
   end
 
-  def self.movies
-    document = open_html(ATMOVIES_URL)
+  def self.taipei_weekend
+    document = open_html(ATMOVIES_MAIN_URL)
+    get_table(document, '2')
+  end
+
+  def self.dvd_rank
+    document = open_html(ATMOVIES_MAIN_URL)
+    get_table(document, '3')
+  end
+
+  # parse the ranktable info
+  def self.get_table(doc, rankid)
+    table = doc.xpath("//*[@id = 'ranklist']/div[" + rankid + ']').text
+    table = table.gsub(' : ', ':').gsub(' ', '').split
+    table = table.each { |item| item.gsub(/[\t\r\n]/, '') }
+    table.pop
+    to_yaml(rankmix(table))
+  end
+
+  # mix the rank info
+  def self.rankmix(t)
+    t.each_with_index.map do |_, index|
+      {
+        index + 1 => t[index].to_s
+      }
+    end
+  end
+
+  # switch to different url accordingly
+  def self.movies(category)
+    case category.upcase
+    when 'LATEST'
+      url = LATEST
+    when 'FIRST_ROUND'
+      url = FIRST_ROUND
+    when 'SECOND_ROUND'
+      url = SECOND_ROUND
+    end
+    movies_parser(url)
+  end
+
+  # parse the movies acoordingly
+  def self.movies_parser(url)
+    document = open_html(url)
     titles = get_titles(document)
     stories = get_stories(document)
     dates = get_dates(document)
-    times = get_runtime(document)
     trailers = get_trailer(document)
-    mix(titles, stories, dates, times, trailers)
-  end
-
-  def self.movie(code)
-    document = open_html(MOVIE_BASE_URL + code + '/')
-    info_said = REFLECTION_SAID + code
-    name = get_one_movie_name(document)
-    info_satitle = encode_zh(name)
-    info_uri = REFLECTION_BASE + info_said + info_satitle + REFLECTION_FS
-    informations = open_html(info_uri)
-    reflection = get_reflection(informations)
-    { name: name, like: reflection[0], unlike: reflection[1] }
+    runtimes = get_runtime(document)
+    result = mix(titles, stories, dates, runtimes, trailers)
+    to_yaml(result)
   end
 
   def self.encode_zh(text)
@@ -76,7 +114,7 @@ class MovieInfo
   # get the storyline of movie
   def self.get_stories(doc)
     storylines = doc.xpath(WHOLE_MOVIEWS_STORIES)
-    storylines.map { |story| story.text }
+    storylines.map(&:text) # { |story| story.text }
   end
 
   # get the runtime of movie
@@ -114,7 +152,7 @@ class MovieInfo
   def self.mix(t, s, d, ti, tr)
     informations = t.each_with_index.map do |_, index|
       { 'title' => t[index], 'story' => s[index], \
-        'date' => d[index], 'runtime(minutes)' => ti[index].to_i, \
+        'date' => d[index], 'runtime(minutes)' => ti[index], \
         'trailer' => tr[index] }
     end
     informations
