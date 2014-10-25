@@ -77,7 +77,7 @@ class MovieInfo
     result = mix(titles, codes, stories, dates)
     to_yaml(result)
   end
-  
+
   # see the specific movie info
   def self.movie_review(code)
     document = open_html(MOVIE_BASE_URL + code + '/')
