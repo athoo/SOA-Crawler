@@ -5,7 +5,6 @@ require 'iconv'
 
 # get the info from atmovies
 class MovieInfo
-  ATMOVIES_URL = 'http://www.atmovies.com.tw/movie/movie_new.html'
   LATEST = 'http://www.atmovies.com.tw/movie/movie_new.html'
   MOVIE_BASE_URL = 'http://www.atmovies.com.tw/movie/'
   WHOLE_MOVIEWS_TITLES = "//div[@class = 'title']/a"
@@ -25,27 +24,28 @@ class MovieInfo
 
   # add three rank parser
   def self.us_weekend
-    document = open_html(ATMOVIES_MAIN_URL)
-    get_table(document, '1')
+    result = get_table('1')
+    to_yaml(result)
   end
 
   def self.taipei_weekend
-    document = open_html(ATMOVIES_MAIN_URL)
-    get_table(document, '2')
+    result = get_table('2')
+    to_yaml(result)
   end
 
   def self.dvd_rank
-    document = open_html(ATMOVIES_MAIN_URL)
-    get_table(document, '3')
+    result = get_table('3')
+    to_yaml(result)
   end
 
   # parse the ranktable info
-  def self.get_table(doc, rankid)
+  def self.get_table(rankid)
+    doc = open_html(ATMOVIES_MAIN_URL)
     table = doc.xpath("//*[@id = 'ranklist']/div[" + rankid + ']').text
     table = table.gsub(' : ', ':').gsub(' ', '').split
     table = table.each { |item| item.gsub(/[\t\r\n]/, '') }
     table.pop
-    to_yaml(rankmix(table))
+    rankmix(table)
   end
 
   # mix the rank info
@@ -58,7 +58,7 @@ class MovieInfo
   end
 
   # switch to different url accordingly
-  def self.movies(category)
+  def self.movies(category = 'LATEST')
     case category.upcase
     when 'LATEST'
       url = LATEST
@@ -67,7 +67,8 @@ class MovieInfo
     when 'SECOND_ROUND'
       url = SECOND_ROUND
     end
-    movies_parser(url)
+    result = movies_parser(url)
+    to_yaml(result)
   end
 
   # parse the movies acoordingly
@@ -78,8 +79,7 @@ class MovieInfo
     dates = get_dates(document)
     trailers = get_trailer(document)
     runtimes = get_runtime(document)
-    result = mix(titles, stories, dates, runtimes, trailers)
-    to_yaml(result)
+    mix(titles, stories, dates, runtimes, trailers)
   end
 
   def self.encode_zh(text)
@@ -125,9 +125,8 @@ class MovieInfo
 
   # get the release date
   def self.get_dates(doc)
-    date_format = '\d+\/\d+\/\d+' # mm/dd/yy
     days_times = split_day_and_time(doc)
-    days_times.map { |d_t| d_t[1].match(/#{date_format}/).to_s }
+    days_times.map { |d_t| d_t[1].match(%r{\d+/\d+/\d+}).to_s } # mm/dd/yy
   end
 
   def self.split_day_and_time(doc)
