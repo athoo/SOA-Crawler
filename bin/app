@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require File.expand_path('../../lib/crawler', __FILE__)
+require 'movie_crawler'
 
 puts MovieInfo.dvd_rank
 puts MovieInfo.us_weekend

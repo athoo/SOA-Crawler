@@ -1,3 +1,3 @@
-module movie_crawler
+module MovieCrawler
   VERSION = '0.1.0'
 end

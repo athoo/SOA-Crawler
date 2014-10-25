@@ -2,7 +2,8 @@ require 'nokogiri'
 require 'open-uri'
 require 'yaml'
 require 'iconv'
-module movie_crawler
+
+module MovieCrawler
   # get the info from atmovies
   class MovieInfo
     LATEST = 'http://www.atmovies.com.tw/movie/movie_new.html'
