@@ -1,11 +1,11 @@
-NiceSchedule
+MovieInfo
 ===============
 
-NiceSchedule tries to grabs some information on the [**Niceday**](http://plan.niceday.tw).
+MovieInfo tries to grabs some information on the [**@movies**](www.atmovies.com.tw/home/).
 
 ## About
 
-Once you have no idea on where to go on weekend, the application will give you some inspiration.
+If you want check the movie schedule in Taiwan.And choose which to see at the weekend. The gem will provide you with the current films including first, second and recommend movie list. Also allowing you check the description and ranking list in the specific one.
 
 ## Usage
 
