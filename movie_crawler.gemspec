@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.date = '2014-10-25'
   s.summary = 'Grab the movies information from the atmovies.com'
   s.description = 'Grab the movies information from the atmovies.com'
-  s.authors = ['Lee Chen', 'transedward', 'David Yang']
+  s.authors = ['Lee Chen', 'Chen Hung Tu', 'David Yang']
   s.email = 'chung1350@hotmail.com'
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
