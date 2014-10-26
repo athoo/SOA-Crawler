@@ -6,7 +6,7 @@ rvm:
     - rbx-2
     - ruby-head
     - jruby-head
-martix:
+matrix:
     allow_failures:
         - rvm: jruby-head
 branches:
